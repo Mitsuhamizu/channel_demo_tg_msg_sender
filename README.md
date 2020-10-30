@@ -1,12 +1,12 @@
 # channel_demo_tg_msg_sender
 
-It's a tg bot service, which simply means you set up a payment channel with the server, and then exchange ckb for my UDT one to one. then you can have the tg bot send the message you want to send to the group for one udt per character.
-
+It's a tg bot service, which simply means you set up a payment channel with the server, and then exchange ckb for my UDT one to one. then you can have the tg bot send the message you want to send to the group for one udt per character. The idea of GPC is from [talk](https://talk.nervos.org/t/a-generic-payment-channel-construction-and-its-composability/4697). 
+Also, you can view the contract codes for [GPC](https://github.com/ZhichunLu-11/ckb-gpc-contract/blob/c8ad9ef42c6dd9e334c5099fa9510cef2997557d/main.c) and [UDT](https://github.com/ZhichunLu-11/ckb-gpc-contract/blob/c8ad9ef42c6dd9e334c5099fa9510cef2997557d/c/simple_udt.c).
 ## Prerequisites
 
-* ckb testnet with rpc listen port 8114.
-* ckb indexer with listen port 8116.
-* mongodb
+* [ckb testnet](https://github.com/nervosnetwork/ckb) with rpc listen port 8114.
+* [ckb indexer](https://github.com/nervosnetwork/ckb-indexer) with listen port 8116.
+* [mongodb](https://github.com/mongodb/mongo)
 
 Please make sure that all of the above services are running and synced to the latest blocks. Then you need to have the following ruby module, and also, and I suggest you use ruby 2.6.
 
