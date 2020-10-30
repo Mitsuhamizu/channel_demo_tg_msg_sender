@@ -85,7 +85,7 @@ def load_ip_port(options, pubkey, id)
   end
 
   if ip_info == nil
-    puts "Please init the config.json or provide the ip and port with --pubkey --port."
+    puts "Please init the config.json or provide the ip and port with --ip and --port."
   end
 
   return ip_info

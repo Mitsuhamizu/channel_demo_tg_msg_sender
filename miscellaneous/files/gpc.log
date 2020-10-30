@@ -716,3 +716,15 @@ I, [2020-10-30T16:32:11.493109 #30729]  INFO -- : verify_info_args: outputs and 
 I, [2020-10-30T16:32:11.498612 #30729]  INFO -- : verify_info_args: length is right!
 I, [2020-10-30T16:32:11.498667 #30729]  INFO -- : verify_info_args: witnesses are right!
 I, [2020-10-30T16:32:11.498697 #30729]  INFO -- : verify_info_args: outputs and outputs_data are right!
+I, [2020-10-30T17:00:48.009711 #32199]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a msg9 comes, the number of record in the db is 1, id: 8342b3a079e07713dde171b8b84d97d9
+I, [2020-10-30T17:00:48.027842 #32199]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 9: msg parsed.
+I, [2020-10-30T17:00:48.027931 #32199]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 9: settlement is right.
+I, [2020-10-30T17:00:48.029401 #32199]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 9: cell all live.
+I, [2020-10-30T17:00:48.047557 #32199]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 9: begin to constrct terminal transaction.
+I, [2020-10-30T17:00:48.049739 #32199]  INFO -- : sign_tx: finish input_group.
+I, [2020-10-30T17:00:48.053307 #32199]  INFO -- : sign_tx: include the first witness.
+I, [2020-10-30T17:00:48.053356 #32199]  INFO -- : sign_tx: include the witness in the same group.
+I, [2020-10-30T17:00:48.053379 #32199]  INFO -- : sign_tx: include other witnesses.
+I, [2020-10-30T17:00:48.057012 #32199]  INFO -- : sign_tx: sign successfully.
+I, [2020-10-30T17:00:48.057039 #32199]  INFO -- : sign_tx: all done.
+I, [2020-10-30T17:00:48.084048 #32199]  INFO -- : Send settlement tx (the good case.) with hash 0x32f3215ecb3cb9c4266a4d5b875eb43c7ec323b12d365ded02e8412dcafbb2d7.
