@@ -177,8 +177,8 @@ class GPCCLI < Thor
   end
 
   # --------------establishment
-  desc "send_establishment_request [--pubkey public key] <--ip ip> \
-        <--port port> \
+  desc "send_establishment_request [--pubkey public key] [--ip ip] \
+        [--port port] \
         <--funding fundings>",
        "Send the chanenl establishment request."
   option :pubkey

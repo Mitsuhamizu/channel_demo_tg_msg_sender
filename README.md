@@ -1,6 +1,6 @@
 # channel_demo_tg_msg_sender
 
-It's a tg bot service, which simply means you set up a payment channel with the server, and then exchange ckb for my UDT one to one. then you can have the tg bot send the message you want to send to the group for one udt per character. The idea of GPC is from [talk](https://talk.nervos.org/t/a-generic-payment-channel-construction-and-its-composability/4697). 
+It's a tg bot service, which simply means you set up a payment channel with the server, and then exchange ckb for my [UDT](https://github.com/ZhichunLu-11/ckb-gpc-contract/blob/c8ad9ef42c6dd9e334c5099fa9510cef2997557d/main.c) one to one. then you can have the tg bot send the message you want to send to the group for one udt per character. The idea of GPC is from [A Generic Payment Channel Construction and Its Composability](https://talk.nervos.org/t/a-generic-payment-channel-construction-and-its-composability/4697). 
 Also, you can view the contract codes for [GPC](https://github.com/ZhichunLu-11/ckb-gpc-contract/blob/c8ad9ef42c6dd9e334c5099fa9510cef2997557d/main.c) and [UDT](https://github.com/ZhichunLu-11/ckb-gpc-contract/blob/c8ad9ef42c6dd9e334c5099fa9510cef2997557d/c/simple_udt.c).
 ## Prerequisites
 
@@ -22,12 +22,12 @@ $ bundle install
 
 ## Usage
 
-First you can run
+First you should run
 ```
 cd client
 ruby GPC.rb
 ```
-to see all the command. I'm only going to cover the commands you need to run under normal flow here.
+to see all the command. I'm only going to cover the commands you need to run under normal cases here. 
 
 ### Init client
 
@@ -45,7 +45,7 @@ Please don't forget to prefix it with 0x.
 ```
 ruby GPC.rb monitor
 ```
-This is to prevent the other party from cheating and to automatically send settlement transactions.
+This is to prevent the other party from cheating and to automatically send settlement transactions and so on. 
 ### Create channel
 
 Then you need to reopen a shell and run 
@@ -56,7 +56,7 @@ For example,
 ```
 ruby GPC.rb send_establishment_request --funding ckb:200 udt:0
 ```
-Please note that please follow the format of funding, even if the amount of UDT you want to put in is zero. Then, if the channel is established successfully, you should see 
+Please follow the format of funding, even if the amount of UDT you want to put in is zero. Then, if the channel is established successfully, you should see 
 ```
 channel is established, please wait the transaction on chain.
 ```
@@ -95,7 +95,7 @@ As you can see, you only put in CKB when you build the channel. to make the proc
 ```
 ruby GPC.rb make_exchange_ckb_to_udt --quantity 20
 ```
-You can replace 20 with any number you want, as long as you have enough CKBs. note that one CKB can only be exchanged for one UDT.
+You can replace '20' with any number you want, as long as you have enough ckbytes. note that one CKB can only be exchanged for one UDT.
 Also, you can trade UDT for CKB, just use make_exchange_udt_to_ckb.
 
 ### Send tg msg
@@ -106,7 +106,7 @@ At this point, you'll be able to use the payment channel to make UDT payments an
 ruby GPC.rb send_tg_msg
 ```
 
-Shell will then prompt you to enter a message, and then just type enter.
+Shell will then prompt you to enter a message, and then just type enter. You should then see the bot send this message to the group.
 
 
 ### Close the channel
@@ -126,3 +126,19 @@ Closing in this way closes the channel immediately and you just need to wait for
 ruby GPC.rb close_channel
 ```
 The advantage of this method is that you don't need to interact with the other party. However, please note that you are committing a closing transaction instead of a settlement transaction, and the Monitor will commit the corresponding settlement transaction after a hundred blocks of the closing transaction on chain.
+
+## FAQ
+
+### This application clearly doesn't require a payment channel to implement, so why are you forcing the inclusion of a payment channel.
+
+This is actually a demo of a payment channel, so I actually just forced it in because I couldn't find a better idea. If you think of a better way to use it, please let me know.
+
+### Can I treat this bot as an application that sends messages anonymously?
+
+I was going to call it an anonymous bot, but I realized that the server has access to your IP (Although I don't actually record your IP.), and your public key on the ckb test network. So I just call it msg_sender. of course. But if you trust me, you can think of it as a bot that helps you send messages anonymously.
+
+###  Why is it so un-robust? If I have a problem on the way to an interaction(Like disconnecting the Internet.), it doesn't even work!
+
+You make a good point, it is indeed very un-robust and I apologize for that, at the moment I haven't done some implementation that adds the robustness function (retransmission mechanism etc). So when you find that it doesn't work, one of the best ways to close that channel is by unilaterally closing it and then reopening it later.
+
+
