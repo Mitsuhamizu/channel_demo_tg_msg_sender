@@ -623,3 +623,96 @@ I, [2020-10-30T14:15:03.919694 #25860]  INFO -- : sign_tx: include other witness
 I, [2020-10-30T14:15:03.927371 #25860]  INFO -- : sign_tx: sign successfully.
 I, [2020-10-30T14:15:03.927419 #25860]  INFO -- : sign_tx: all done.
 I, [2020-10-30T14:15:03.952578 #25860]  INFO -- : Send settlement tx (the good case.) with hash 0xcbd3c93be11580c462b25c1d16f00deba7ab2a7d46de750ab9a58ddf54c9015c.
+I, [2020-10-30T15:17:03.090079 #28737]  INFO -- : gather_input: begin to gather funding.
+I, [2020-10-30T15:17:03.102574 #28737]  INFO -- : gather_input: begin to gather funding.
+I, [2020-10-30T15:17:03.104186 #28737]  INFO -- : gather_input: refund_minimal_capacity: 13400000000, change_minimal_capacity: 13400000000
+I, [2020-10-30T15:17:03.109676 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a send msg1.
+I, [2020-10-30T15:17:03.231362 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a msg2 comes, the number of record in the db is 1, id: 675be26a6f3becb5a58fb19ee30d9a39
+I, [2020-10-30T15:17:03.236461 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a receive msg 2.
+I, [2020-10-30T15:17:03.245461 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg_2: msg parsed.
+I, [2020-10-30T15:17:03.250059 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg_2: separte remote change.
+I, [2020-10-30T15:17:03.250111 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg_2: start to check remote cells.
+I, [2020-10-30T15:17:03.250157 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check cells: amount begin.
+I, [2020-10-30T15:17:03.250204 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a assemble_change: begin.
+I, [2020-10-30T15:17:03.250228 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a assemble_change: capacity assembled.
+I, [2020-10-30T15:17:03.250245 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a assemble_change: branch 2.
+I, [2020-10-30T15:17:03.255993 #28737]  INFO -- : check_output: udt, expect: 2000000, actual: 2000000
+I, [2020-10-30T15:17:03.260332 #28737]  INFO -- : check_output: ckb, expect: 0, actual: 0
+I, [2020-10-30T15:17:03.260388 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check cells: capacity end.
+I, [2020-10-30T15:17:03.260406 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg_2: remote cells have been checked.
+I, [2020-10-30T15:17:03.260660 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg_2: gpc output has been checked.
+I, [2020-10-30T15:17:03.260686 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg_2: read input finished.
+I, [2020-10-30T15:17:03.276300 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a send msg_3: stx and ctx construction finished.
+I, [2020-10-30T15:17:03.276417 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a send msg_3: msg sent.
+I, [2020-10-30T15:17:03.403617 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a msg4 comes, the number of record in the db is 1, id: 8342b3a079e07713dde171b8b84d97d9
+I, [2020-10-30T15:17:03.408279 #28737]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a receive msg 4.
+I, [2020-10-30T15:17:03.451195 #28737]  INFO -- : sign_tx: finish input_group.
+I, [2020-10-30T15:17:03.451431 #28737]  INFO -- : sign_tx: include the first witness.
+I, [2020-10-30T15:17:03.451452 #28737]  INFO -- : sign_tx: include the witness in the same group.
+I, [2020-10-30T15:17:03.451467 #28737]  INFO -- : sign_tx: include other witnesses.
+I, [2020-10-30T15:17:03.454480 #28737]  INFO -- : sign_tx: sign successfully.
+I, [2020-10-30T15:17:03.454497 #28737]  INFO -- : sign_tx: all done.
+I, [2020-10-30T15:19:13.941116 #28906]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 make_exchange: ckb2udt
+I, [2020-10-30T15:19:13.941223 #28906]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 is payer, 0xf261ea0fca37e5dbaf797640d36d382ca66c22f5 is payee.
+I, [2020-10-30T15:19:13.941671 #28906]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:13.941722 #28906]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fdc31241ca0>, output_data: 0x0000000000000000
+I, [2020-10-30T15:19:13.942072 #28906]  INFO -- : update_stx: ckb branch.
+I, [2020-10-30T15:19:18.759693 #28925]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 make_exchange: ckb2udt
+I, [2020-10-30T15:19:18.759815 #28925]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 is payer, 0xf261ea0fca37e5dbaf797640d36d382ca66c22f5 is payee.
+I, [2020-10-30T15:19:18.760237 #28925]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:18.760282 #28925]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fe6718bd080>, output_data: 0x0000000000000000
+I, [2020-10-30T15:19:18.760558 #28925]  INFO -- : update_stx: ckb branch.
+I, [2020-10-30T15:19:18.760614 #28925]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:18.760643 #28925]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fe6718bc8b0>, output_data: 0x80841e0000000000
+I, [2020-10-30T15:19:18.760905 #28925]  INFO -- : update_stx: ckb branch.
+I, [2020-10-30T15:19:18.760954 #28925]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:18.760985 #28925]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fe6718bd080>, output_data: 0x0000000000000000
+I, [2020-10-30T15:19:18.761257 #28925]  INFO -- : update_stx: udt branch.
+I, [2020-10-30T15:19:18.761303 #28925]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:18.761330 #28925]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fe6718bc8b0>, output_data: 0x80841e0000000000
+I, [2020-10-30T15:19:18.761635 #28925]  INFO -- : update_stx: udt branch.
+I, [2020-10-30T15:19:18.771098 #28925]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 make exchange.
+I, [2020-10-30T15:19:18.869873 #28925]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a msg7 comes, the number of record in the db is 1, id: 8342b3a079e07713dde171b8b84d97d9
+I, [2020-10-30T15:19:18.881253 #28925]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 7: begin to check the info.
+I, [2020-10-30T15:19:18.891324 #28925]  INFO -- : verify_info_args: length is right!
+I, [2020-10-30T15:19:18.891384 #28925]  INFO -- : verify_info_args: witnesses are right!
+I, [2020-10-30T15:19:18.891415 #28925]  INFO -- : verify_info_args: outputs and outputs_data are right!
+I, [2020-10-30T15:19:18.892117 #28925]  INFO -- : verify_info_args: length is right!
+I, [2020-10-30T15:19:18.892143 #28925]  INFO -- : verify_info_args: witnesses are right!
+I, [2020-10-30T15:19:18.892172 #28925]  INFO -- : verify_info_args: outputs and outputs_data are right!
+I, [2020-10-30T15:19:30.274074 #28971]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 send_payments: prepare to send {:udt=>5}
+I, [2020-10-30T15:19:30.274436 #28971]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 is payer.
+I, [2020-10-30T15:19:30.274468 #28971]  INFO -- : 0xf261ea0fca37e5dbaf797640d36d382ca66c22f5 is payee.
+I, [2020-10-30T15:19:30.274491 #28971]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:30.274515 #28971]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fd4e18f3aa0>, output_data: 0x3200000000000000
+I, [2020-10-30T15:19:30.274760 #28971]  INFO -- : update_stx: udt branch.
+I, [2020-10-30T15:19:30.274796 #28971]  INFO -- : update_stx: begin.
+I, [2020-10-30T15:19:30.274818 #28971]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fd4e18f37a8>, output_data: 0x4e841e0000000000
+I, [2020-10-30T15:19:30.275043 #28971]  INFO -- : update_stx: udt branch.
+I, [2020-10-30T15:19:30.296802 #28971]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 sent payment
+I, [2020-10-30T15:19:30.380131 #28971]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a msg7 comes, the number of record in the db is 1, id: 8342b3a079e07713dde171b8b84d97d9
+I, [2020-10-30T15:19:30.392075 #28971]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 7: begin to check the info.
+I, [2020-10-30T15:19:30.410112 #28971]  INFO -- : verify_info_args: length is right!
+I, [2020-10-30T15:19:30.410181 #28971]  INFO -- : verify_info_args: witnesses are right!
+I, [2020-10-30T15:19:30.410213 #28971]  INFO -- : verify_info_args: outputs and outputs_data are right!
+I, [2020-10-30T15:19:30.416304 #28971]  INFO -- : verify_info_args: length is right!
+I, [2020-10-30T15:19:30.416369 #28971]  INFO -- : verify_info_args: witnesses are right!
+I, [2020-10-30T15:19:30.416418 #28971]  INFO -- : verify_info_args: outputs and outputs_data are right!
+I, [2020-10-30T16:32:11.343926 #30729]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 send_payments: prepare to send {:udt=>5}
+I, [2020-10-30T16:32:11.344736 #30729]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 is payer.
+I, [2020-10-30T16:32:11.344785 #30729]  INFO -- : 0xf261ea0fca37e5dbaf797640d36d382ca66c22f5 is payee.
+I, [2020-10-30T16:32:11.344814 #30729]  INFO -- : update_stx: begin.
+I, [2020-10-30T16:32:11.344842 #30729]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fafcc281d28>, output_data: 0x2d00000000000000
+I, [2020-10-30T16:32:11.345141 #30729]  INFO -- : update_stx: udt branch.
+I, [2020-10-30T16:32:11.345190 #30729]  INFO -- : update_stx: begin.
+I, [2020-10-30T16:32:11.345218 #30729]  INFO -- : update_stx: output: #<CKB::Types::Output:0x00007fafcc2819e0>, output_data: 0x53841e0000000000
+I, [2020-10-30T16:32:11.346153 #30729]  INFO -- : update_stx: udt branch.
+I, [2020-10-30T16:32:11.373948 #30729]  INFO -- : 0x470dcdc5e44064909650113a274b3b36aecb6dc7 sent payment
+I, [2020-10-30T16:32:11.461318 #30729]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a msg7 comes, the number of record in the db is 1, id: 8342b3a079e07713dde171b8b84d97d9
+I, [2020-10-30T16:32:11.474367 #30729]  INFO -- : 0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a check msg 7: begin to check the info.
+I, [2020-10-30T16:32:11.493009 #30729]  INFO -- : verify_info_args: length is right!
+I, [2020-10-30T16:32:11.493077 #30729]  INFO -- : verify_info_args: witnesses are right!
+I, [2020-10-30T16:32:11.493109 #30729]  INFO -- : verify_info_args: outputs and outputs_data are right!
+I, [2020-10-30T16:32:11.498612 #30729]  INFO -- : verify_info_args: length is right!
+I, [2020-10-30T16:32:11.498667 #30729]  INFO -- : verify_info_args: witnesses are right!
+I, [2020-10-30T16:32:11.498697 #30729]  INFO -- : verify_info_args: outputs and outputs_data are right!
