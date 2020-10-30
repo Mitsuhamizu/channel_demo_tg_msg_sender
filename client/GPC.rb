@@ -40,7 +40,7 @@ def load_pubkey(options)
   end
 
   if pubkey == nil
-    puts "Please init the config.json or provide the pubkey with --pubkey."
+    puts "Please check the config.json."
   end
 
   return pubkey
@@ -69,6 +69,10 @@ def load_ip_port(options, pubkey, id)
 
   ip_info = nil
 
+  if id == ""
+    puts "please set the channel id firstly."
+    return false
+  end
   view = @coll_sessions.find { }
   view.each do |doc|
     if doc[:id] == id

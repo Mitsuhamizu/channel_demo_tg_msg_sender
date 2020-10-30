@@ -13,7 +13,6 @@ require "date"
 require_relative "tx_generator.rb"
 require_relative "verification.rb"
 require_relative "type_script_info.rb"
-require "telegram/bot"
 $VERBOSE = nil
 
 class Communication
@@ -810,6 +809,17 @@ class Communication
           tg_msg = msg[:tg_msg]
           if payment.values()[0] < 0
             record_result({ "receiver_step6_make_payments_error_negative": payment_value })
+            client.puts("Please pay me but not let me pay!")
+            return false
+          end
+
+          if payment.keys()[0] != "0xecc762badc4ed2a459013afd5f82ec9b47d83d6e4903db1207527714c06f177b"
+            client.puts("I only accept udt!")
+            return false
+          end
+
+          if payment.values()[0] != msg[:tg_msg].length()
+            client.puts("You msg length is #{msg[:tg_msg].length()}, but you only provide #{payment.values()[0]} udts.")
             return false
           end
           # exchange
@@ -818,6 +828,8 @@ class Communication
             puts "The data is wrong."
           end
         end
+
+        # check the udt is enough
 
         @logger.info("#{@key.pubkey} check msg 6 payment: load local ctx and stx.")
 
@@ -1089,12 +1101,12 @@ class Communication
                                                                   status: 6, stx_pend: 0, ctx_pend: 0,
                                                                   nounce: nounce + 1 } })
 
-      # if the msg to be sent is not empty, just send the msg to telegra group.
-      if tg_msg != nil
-        Telegram::Bot::Client.run(@token) do |bot|
-          bot.api.send_message(chat_id: @group_id, text: "#{tg_msg}")
-        end
-      end
+      # # if the msg to be sent is not empty, just send the msg to telegra group.
+      # if tg_msg != nil
+      #   Telegram::Bot::Client.run(@token) do |bot|
+      #     bot.api.send_message(chat_id: @group_id, text: "#{tg_msg}")
+      #   end
+      # end
 
       @logger.info("payment done, now the version in local db is #{nounce + 1}")
       return "done"

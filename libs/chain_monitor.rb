@@ -15,7 +15,6 @@ class Minotor
     @wallet = CKB::Wallet.from_hex(@api, @key.privkey)
     @tx_generator = Tx_generator.new(@key)
 
-
     @client = Mongo::Client.new(["127.0.0.1:27017"], :database => "GPC")
     @db = @client.database
     @coll_sessions = @db[@key.pubkey + "_session_pool"]
@@ -126,13 +125,13 @@ class Minotor
                 ctx_input_h = @tx_generator.convert_input(transaction, index, 0).to_h
                 @coll_sessions.find_one_and_update({ id: doc[:id] }, { "$set" => { ctx_input: ctx_input_h, stage: 2 } })
                 tx_hash = send_tx(doc, "closing")
-                puts "send closing tx about #{doc[:id]} at block number #{i}."
+                puts "Send closing tx about #{doc[:id]} at block number #{i}."
               elsif remote[:output_nounce] == nounce_local
                 # my or remote latest ctx is accepted by chain, so prepare to settle.
                 timeout = parse_since(doc[:timeout])
                 stx_input_h = @tx_generator.convert_input(transaction, index, doc[:timeout].to_i).to_h
                 @coll_sessions.find_one_and_update({ id: doc[:id] }, { "$set" => { settlement_time: i + timeout, stx_input: stx_input_h, stage: 3 } })
-                puts "#{doc[:id]} is closing at block number #{i}, the tx hash is #{transaction.hash}"
+                puts "#{doc[:id]} is closing at block number #{i} with right nounce, the tx hash is #{transaction.hash}"
               elsif stx_pend != 0 && remote[:output_nounce] - nounce_local == 1
                 # remote party break his promise, so just prepare to send the pending stx.
                 timeout = parse_since(doc[:timeout])
@@ -273,7 +272,6 @@ class Minotor
     fee_total = local_change_output.calculate_min_capacity("0x") + fee
     fee_cell = gather_fee_cell([@lock], fee_total, @coll_cells)
     return false if fee_cell == nil
-
 
     fee_cell_capacity = get_total_capacity(fee_cell)
     input += fee_cell
