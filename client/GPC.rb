@@ -392,6 +392,47 @@ class GPCCLI < Thor
     file = File.new("config.json", "w")
     file.syswrite(data_json)
   end
+
+  # --------------Inquiry msg.
+  desc "inquiry_msg <--text msg_text>", "inquiry the detailed information about this message."
+
+  option :text, :required => true
+
+  def inquiry_msg()
+    info = load_config()
+    return false if !info
+
+    private_key = pubkey_to_privkey(info[:pubkey])
+    communicator = Communication.new(private_key)
+    communicator.send_inquiry_tg_msg(info[:robot_ip], info[:robot_port], options[:text])
+  end
+
+  # --------------pin msg.
+  desc "pin_msg [--id msg_id] [--duration seconds] [--price price_per_seconds]", "pin a specific msg."
+
+  option :id, :required => true
+  option :duration, :required => true
+  option :price, :required => true
+
+  def pin_msg()
+    info = load_pubkey_id_ip(options)
+    return false if !info
+
+    private_key = pubkey_to_privkey(info[:pubkey])
+    balance = get_balance(info[:pubkey])
+
+    udt_required = (options[:duration].to_f * options[:price].to_f).ceil
+    udt_actual = balance[info[:id]][:local][:udt]
+
+    if udt_actual < udt_required
+      puts "you do not have enough udt, please exchange it with ckb first."
+    end
+    # construct the payment.
+    communicator = Communication.new(private_key)
+    payment = { udt: udt_required }
+    pinned_msg = { text: nil, id: options[:id] }
+    communicator.send_payments(info[:ip], info[:port], info[:id], payment, pinned_msg, duration: options[:duration].to_f)
+  end
 end
 
 $VERBOSE = nil

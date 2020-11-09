@@ -217,7 +217,7 @@ class Communication
       # Just the plain text.
     when 0
       puts msg[:text]
-      return true
+      return "done"
     when 1
       @logger.info("#{@key.pubkey} receive msg 1.")
       # parse the msg
@@ -1327,7 +1327,7 @@ class Communication
     end
   end
 
-  def send_payments(remote_ip, remote_port, id, payment, tg_msg = nil)
+  def send_payments(remote_ip, remote_port, id, payment, pinned_msg = nil, duration = nil)
     s = TCPSocket.open(remote_ip, remote_port)
 
     remote_pubkey = @coll_sessions.find({ id: id }).first[:remote_pubkey]
@@ -1379,7 +1379,7 @@ class Communication
     stx_info_h = info_to_hash(stx_info)
 
     # send the msg.
-    msg = { id: id, type: 6, ctx_info: ctx_info_h, stx_info: stx_info_h, tg_msg: tg_msg,
+    msg = { id: id, type: 6, ctx_info: ctx_info_h, stx_info: stx_info_h, tg_msg: pinned_msg, duration: duration,
             payment: payment, msg_type: "payment" }.to_json
     s.puts(msg)
 
@@ -1521,6 +1521,25 @@ class Communication
       end
     rescue Timeout::Error
       puts "Timed out!"
+    rescue => exception
+      s.close()
+    end
+  end
+
+  def send_inquiry_tg_msg(remote_ip, remote_port, msg_text)
+    s = TCPSocket.open(remote_ip, remote_port)
+    msg = { type: 10, text: msg_text }.to_json
+    s.puts(msg)
+
+    begin
+      timeout(5) do
+        while (1)
+          msg = JSON.parse(s.gets, symbolize_names: true)
+          puts msg
+        end
+      end
+    rescue Timeout::Error
+      puts "Timed out. If you fail to receive the data, you should try again."
     rescue => exception
       s.close()
     end
