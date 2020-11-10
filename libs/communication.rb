@@ -1220,8 +1220,6 @@ class Communication
               msg = JSON.parse(msg, symbolize_names: true)
               ret = process_recv_message(client, msg)
             end
-
-            break if ret == 100
           rescue => exception
             break if exception.class == Errno::ECONNRESET
           end
@@ -1543,5 +1541,33 @@ class Communication
     rescue => exception
       s.close()
     end
+  end
+
+  def send_refund_request(remote_ip, remote_port, id)
+    s = TCPSocket.open(remote_ip, remote_port)
+    msg = { type: 11, id: id }.to_json
+    s.puts(msg)
+
+    begin
+      timeout(5) do
+        while (true)
+          msg = s.gets
+          if msg != nil
+            msg = JSON.parse(msg, symbolize_names: true)
+            ret = process_recv_message(s, msg)
+          end
+          if ret == "done"
+            s.close()
+            break
+          end
+        end
+      end
+    rescue Timeout::Error
+      puts "Timed out!"
+    rescue Errno::ECONNRESET
+      puts "reset"
+    end
+
+    return true
   end
 end
