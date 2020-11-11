@@ -1,7 +1,1 @@
-{
-    "pubkey": "0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a",
-    "id": "",
-    "robot_ip": "127.0.0.1",
-    "robot_port": "1000",
-    "inquiry_text": null
-}
+{"pubkey":"0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a","channel_id":"d21cb1df902d783739d09b12e88876b1","robot_ip":"127.0.0.1","robot_port":"1000","inquiry_text":null}

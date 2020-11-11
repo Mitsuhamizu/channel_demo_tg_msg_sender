@@ -33,7 +33,7 @@ class Communication
     @path_to_file = __dir__ + "/../miscellaneous/files/"
     @logger = Logger.new(@path_to_file + "gpc.log")
     @token = "896274990:AAEOmszCWLd2dLCL7PGWFlBjJjtxQOHmJpU"
-    @group_id = -1001372639358
+    @udt_type_script_hash = load_type()
   end
 
   # Generate the plain text msg, client will print it.
@@ -716,6 +716,19 @@ class Communication
                                                                         status: 6, msg_cache: msg_reply } })
 
       client.close()
+
+      # init the config.
+      data_hash = {}
+      if File.file?("../client/config.json")
+        data_raw = File.read("../client/config.json")
+        data_hash = JSON.parse(data_raw, symbolize_names: true)
+      end
+      id = { id: msg[:id] }
+      data_hash = data_hash.merge(id)
+      data_json = data_hash.to_json
+      file = File.new("../client/config.json", "w")
+      file.syswrite(data_json)
+
       puts "channel is established, please wait the transaction on chain."
       return "done"
     when 5
@@ -813,18 +826,14 @@ class Communication
             return false
           end
 
-          if payment.keys()[0] != "0xecc762badc4ed2a459013afd5f82ec9b47d83d6e4903db1207527714c06f177b"
+          if payment.keys()[0] != @udt_type_script_hash
             client.puts("I only accept udt!")
             return false
           end
 
-          if payment.values()[0] != msg[:tg_msg].length()
-            client.puts("You msg length is #{msg[:tg_msg].length()}, but you only provide #{payment.values()[0]} udts.")
-            return false
-          end
           # exchange
         elsif payment.length == 2
-          if payment["0xecc762badc4ed2a459013afd5f82ec9b47d83d6e4903db1207527714c06f177b"] * 10 ** 8 != -payment[""]
+          if payment[@udt_type_script_hash] * 10 ** 9 != -payment[""]
             puts "The data is wrong."
           end
         end
@@ -1101,13 +1110,6 @@ class Communication
                                                                   status: 6, stx_pend: 0, ctx_pend: 0,
                                                                   nounce: nounce + 1 } })
 
-      # # if the msg to be sent is not empty, just send the msg to telegra group.
-      # if tg_msg != nil
-      #   Telegram::Bot::Client.run(@token) do |bot|
-      #     bot.api.send_message(chat_id: @group_id, text: "#{tg_msg}")
-      #   end
-      # end
-
       @logger.info("payment done, now the version in local db is #{nounce + 1}")
       return "done"
     when 9
@@ -1202,6 +1204,8 @@ class Communication
       rescue Exception => e
         # puts e
       end
+
+      @coll_sessions.find_one_and_update({ id: msg[:id] }, { "$set" => { status: 6 } })
       return "done"
     end
   end
@@ -1327,7 +1331,6 @@ class Communication
 
   def send_payments(remote_ip, remote_port, id, payment, pinned_msg = nil, duration = nil)
     s = TCPSocket.open(remote_ip, remote_port)
-
     remote_pubkey = @coll_sessions.find({ id: id }).first[:remote_pubkey]
     local_pubkey = @coll_sessions.find({ id: id }).first[:local_pubkey]
     sig_index = @coll_sessions.find({ id: id }).first[:sig_index]
@@ -1465,9 +1468,9 @@ class Communication
     @logger.info("#{local_pubkey} is payer, #{remote_pubkey} is payee.")
 
     if flag == "ckb2udt"
-      payment = { ckb: quantity * 10 ** 8, udt: -quantity }
+      payment = { ckb: quantity * 10 ** 8, udt: -quantity / 10 }
     elsif flag == "udt2ckb"
-      payment = { ckb: -quantity * 10 ** 8, udt: quantity }
+      payment = { ckb: -quantity * 10 ** 9, udt: quantity }
     else
       puts "something went wrong."
     end

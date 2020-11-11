@@ -38,3 +38,20 @@ def find_type(type_script_hash)
 
   return { type_script: type_script, type_dep: type_dep, decoder: decoder, encoder: encoder }
 end
+
+def load_json_file(path)
+  data_raw = File.read(path)
+  data_json = JSON.parse(data_raw, symbolize_names: true)
+  return data_json
+end
+
+
+def load_type()
+  # type of asset.
+  data_json = load_json_file(@path_to_file + "contract_info.json")
+  type_script_json = data_json[:type_script]
+  type_script_h = JSON.parse(type_script_json, symbolize_names: true)
+  type_script = CKB::Types::Script.from_h(type_script_h)
+  type_script_hash = type_script.compute_hash
+  return type_script_hash
+end

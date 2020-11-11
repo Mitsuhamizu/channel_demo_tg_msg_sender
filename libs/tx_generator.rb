@@ -6,6 +6,7 @@ require "ckb"
 require "json"
 require "secp256k1"
 require_relative "ckb_interaction.rb"
+require_relative "type_script_info.rb"
 
 class MyECDSA < Secp256k1::BaseKey
   include Secp256k1::Utils, Secp256k1::ECDSA
@@ -21,6 +22,7 @@ class Tx_generator
   def initialize(key)
     @key = key
     @path_to_file = __dir__ + "/../miscellaneous/files/"
+    @udt_type_script_hash = load_type()
     data_raw = File.read(@path_to_file + "contract_info.json")
     data_json = JSON.parse(data_raw, symbolize_names: true)
     @api = CKB::API::new
@@ -395,7 +397,7 @@ class Tx_generator
           return (output.capacity - output.calculate_min_capacity(output_data)) - amount if output.capacity - amount < output.calculate_min_capacity(output_data) && output.lock.args == pubkey_payer
           stx_info[:outputs][index].capacity = output.capacity - amount if output.lock.args == pubkey_payer
           stx_info[:outputs][index].capacity = output.capacity + amount if output.lock.args == pubkey_payee
-        elsif payment_type_hash == "0xecc762badc4ed2a459013afd5f82ec9b47d83d6e4903db1207527714c06f177b"
+        elsif payment_type_hash == @udt_type_script_hash
           @logger.info("update_stx: udt branch.")
           return type[:decoder].call(output_data) - amount if type[:decoder].call(output_data) - amount < 0
           stx_info[:outputs_data][index] = type[:encoder].call(type[:decoder].call(output_data) - amount) if output.lock.args == pubkey_payer

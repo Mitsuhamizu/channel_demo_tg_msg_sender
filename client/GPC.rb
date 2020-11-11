@@ -27,96 +27,7 @@ end
 def load_config()
   data_raw = File.read("config.json")
   data_json = JSON.parse(data_raw, symbolize_names: true)
-  return data_json
-end
-
-def load_pubkey(options)
-  pubkey = nil
-  config = load_config()
-  if options[:pubkey] != nil
-    pubkey = options[:pubkey]
-  elsif config[:pubkey] != nil
-    pubkey = config[:pubkey]
-  end
-
-  if pubkey == nil
-    puts "Please check the config.json."
-  end
-
-  return pubkey
-end
-
-def load_id(options)
-  id = nil
-  config = load_config()
-  if options[:id] != nil
-    id = options[:id]
-  elsif config[:id] != nil
-    id = config[:id]
-  end
-
-  if id == nil
-    puts "Please init the config.json or provide the id with --id."
-  end
-
-  return id
-end
-
-def load_ip_port(options, pubkey, id)
-  @client = Mongo::Client.new(["127.0.0.1:27017"], :database => "GPC")
-  @db = @client.database
-  @coll_sessions = @db[pubkey + "_session_pool"]
-
-  ip_info = nil
-
-  if id == ""
-    puts "please set the channel id firstly."
-    return false
-  end
-  view = @coll_sessions.find { }
-  view.each do |doc|
-    if doc[:id] == id
-      ip_info = { ip: doc[:remote_ip], port: doc[:remote_port] }
-    end
-  end
-
-  if options[:ip] != nil && options[:port] != nil
-    ip_info = { ip: options[:ip], port: options[:port] }
-  end
-
-  if ip_info == nil
-    puts "Please init the config.json or provide the ip and port with --ip and --port."
-  end
-
-  return ip_info
-end
-
-def load_pubkey_id(options)
-  pubkey = load_pubkey(options)
-  id = load_id(options)
-
-  if pubkey == nil
-    return false
-  end
-
-  if id == nil
-    return false
-  end
-
-  return { pubkey: pubkey, id: id }
-end
-
-def load_pubkey_id_ip(options)
-  # load pubkey and id
-  channel_info = load_pubkey_id(options)
-  return false if !channel_info
-
-  # load ip info
-  ip_info = load_ip_port(options, channel_info[:pubkey], channel_info[:id])
-  return false if !ip_info
-
-  result = channel_info.merge(ip_info)
-  return result
+  return data_json[:pubkey], data_json[:channel_id], data_json[:robot_ip], data_json[:robot_port]
 end
 
 def get_balance(pubkey)
@@ -177,19 +88,14 @@ class GPCCLI < Thor
   end
 
   # --------------establishment
-  desc "send_establishment_request [--pubkey public key] [--ip ip] \
-        [--port port] \
-        <--funding fundings>",
+  desc "send_establishment_request <--funding fundings>",
        "Send the chanenl establishment request."
-  option :pubkey
-  option :ip
-  option :port
   option :funding, :required => true, :type => :hash
 
   def send_establishment_request()
-    pubkey = load_pubkey(options)
-    if pubkey == nil
-      puts "Please init the config.json or provide the pubkey with --pubkey."
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port
+      puts "Please init the config.json."
       return false
     end
 
@@ -204,8 +110,7 @@ class GPCCLI < Thor
       fundings[asset_type] = fundings[asset_type].to_i
     end
 
-    config = load_config()
-    communicator.send_establish_channel(config[:robot_ip], config[:robot_port], fundings)
+    communicator.send_establish_channel(robot_ip, robot_port, fundings)
   end
 
   # --------------monitor
@@ -214,9 +119,10 @@ class GPCCLI < Thor
   option :pubkey
 
   def monitor()
-    pubkey = load_pubkey(options)
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+
     if pubkey == nil
-      puts "Please init the config.json or provide the pubkey with --pubkey."
+      puts "Please init the config.json."
       return false
     end
 
@@ -234,11 +140,11 @@ class GPCCLI < Thor
   option :id
 
   def close_channel()
-    # load pubkey and id.
-    channel_info = load_pubkey_id(options)
-    return false if !channel_info
-    pubkey = channel_info[:pubkey]
-    id = channel_info[:id]
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !channel_id
+      puts "Please init the config.json."
+      return false
+    end
 
     private_key = pubkey_to_privkey(pubkey)
     monitor = Minotor.new(private_key)
@@ -247,27 +153,26 @@ class GPCCLI < Thor
     @db = @client.database
     @coll_sessions = @db[pubkey + "_session_pool"]
 
-    doc = @coll_sessions.find({ id: id }).first
+    doc = @coll_sessions.find({ id: channel_id }).first
     monitor.send_tx(doc, "closing")
   end
 
   # --------------send the closing request about bilateral closing.
-  desc "send_closing_request [--pubkey public key] [--ip ip] [--port port] [--id id] [--fee fee] ", "The good case, bilateral closing."
+  desc "send_closing_request [--fee fee] ", "The good case, bilateral closing."
 
-  option :pubkey
-  option :ip
-  option :port
-  option :id
   option :fee
 
   def send_closing_request()
-    info = load_pubkey_id_ip(options)
-    return false if !info
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port || !channel_id
+      puts "Please init the config.json."
+      return false
+    end
 
-    private_key = pubkey_to_privkey(info[:pubkey])
+    private_key = pubkey_to_privkey(pubkey)
     communicator = Communication.new(private_key)
-    communicator.send_closing_request(info[:ip], info[:port], info[:id], options[:fee].to_i) if options[:fee]
-    communicator.send_closing_request(info[:ip], info[:port], info[:id]) if !options[:fee]
+    communicator.send_closing_request(robot_ip robot_port, channel_id, options[:fee].to_i) if options[:fee]
+    communicator.send_closing_request(robot_ip, robot_port, channel_id) if !options[:fee]
   end
 
   # --------------list the channel.
@@ -276,8 +181,11 @@ class GPCCLI < Thor
   option :pubkey
 
   def list_channel()
-    pubkey = load_pubkey(options)
-    return false if !pubkey
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey
+      puts "Please init the config.json."
+      return false
+    end
 
     balance = get_balance(pubkey)
     for id in balance.keys()
@@ -288,74 +196,36 @@ class GPCCLI < Thor
   end
 
   # --------------exchange the ckb and channel.
-  desc "make_exchange_ckb_to_udt [--pubkey public key] [--ip ip] [--port port] [--id id] <--quantity quantity>", "use ckb for udt."
-  option :pubkey
-  option :ip
-  option :port
-  option :id
+  desc "make_exchange_ckb_to_udt <--quantity quantity>", "use ckb for udt."
   option :quantity, :required => true
 
   def make_exchange_ckb_to_udt()
-    info = load_pubkey_id_ip(options)
-    return false if !info
-
-    private_key = pubkey_to_privkey(info[:pubkey])
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port || !channel_id
+      puts "Please init the config.json."
+      return false
+    end
+    private_key = pubkey_to_privkey(pubkey)
     quantity = options[:quantity]
     communicator = Communication.new(private_key)
-    communicator.make_exchange(info[:ip], info[:port], info[:id], "ckb2udt", quantity.to_i)
+    communicator.make_exchange(robot_ip, robot_port, channel_id, "ckb2udt", quantity.to_i)
   end
 
   # --------------exchange the udt and channel.
   desc "make_exchange_ckb_to_udt [--pubkey public key] [--ip ip] [--port port] [--id id] <--quantity quantity>", "use udt for ckb."
 
-  option :pubkey
-  option :ip
-  option :port
-  option :id
   option :quantity, :required => true
 
   def make_exchange_udt_to_ckb()
-    info = load_pubkey_id_ip(options)
-    return false if !info
-
-    private_key = pubkey_to_privkey(info[:pubkey])
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port || !channel_id
+      puts "Please init the config.json."
+      return false
+    end
+    private_key = pubkey_to_privkey(pubkey)
     quantity = options[:quantity]
     communicator = Communication.new(private_key)
-
-    communicator.make_exchange(info[:ip], info[:port], info[:id], "udt2ckb", quantity.to_i)
-  end
-
-  # --------------send_msg by payment channel.
-  desc "send_tg_msg --pubkey <public key> --ip <ip> --port <port> --id <id>", "pay tg robot and he will send msg for you."
-
-  option :pubkey
-  option :port
-  option :ip
-  option :id
-
-  def send_tg_msg()
-    info = load_pubkey_id_ip(options)
-    return false if !info
-
-    private_key = pubkey_to_privkey(info[:pubkey])
-
-    puts "Tell me what you want to say."
-    tg_msg = STDIN.gets.chomp
-    tg_msg_len = tg_msg.length
-
-    balance = get_balance(info[:pubkey])
-
-    udt_required = tg_msg_len * 1
-    udt_actual = balance[info[:id]][:local][:udt]
-
-    if udt_actual < udt_required
-      puts "you do not have enough udt, please exchange it with ckb first."
-    end
-
-    # construct the payment.
-    payment = { udt: udt_required }
-    communicator = Communication.new(private_key)
-    communicator.send_payments(info[:ip], info[:port], info[:id], payment, tg_msg)
+    communicator.make_exchange(robot_ip, robot_port, channel_id, "udt2ckb", quantity.to_i)
   end
 
   # --------------send_msg by payment channel.
@@ -386,7 +256,7 @@ class GPCCLI < Thor
       data_raw = File.read("config.json")
       data_hash = JSON.parse(data_raw, symbolize_names: true)
     end
-    id = { id: options[:id] }
+    id = { channel_id: options[:id] }
     data_hash = data_hash.merge(id)
     data_json = data_hash.to_json
     file = File.new("config.json", "w")
@@ -399,12 +269,15 @@ class GPCCLI < Thor
   option :text, :required => true
 
   def inquiry_msg()
-    info = load_config()
-    return false if !info
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port
+      puts "Please init the config.json."
+      return false
+    end
 
-    private_key = pubkey_to_privkey(info[:pubkey])
+    private_key = pubkey_to_privkey(pubkey)
     communicator = Communication.new(private_key)
-    communicator.send_inquiry_tg_msg(info[:robot_ip], info[:robot_port], options[:text])
+    communicator.send_inquiry_tg_msg(robot_ip, robot_port, options[:text])
   end
 
   # --------------pin msg.
@@ -415,14 +288,17 @@ class GPCCLI < Thor
   option :price, :required => true
 
   def pin_msg()
-    info = load_pubkey_id_ip(options)
-    return false if !info
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port || !channel_id
+      puts "Please init the config.json."
+      return false
+    end
 
-    private_key = pubkey_to_privkey(info[:pubkey])
-    balance = get_balance(info[:pubkey])
+    private_key = pubkey_to_privkey(pubkey)
+    balance = get_balance(pubkey)
 
     udt_required = (options[:duration].to_f * options[:price].to_f).ceil
-    udt_actual = balance[info[:id]][:local][:udt]
+    udt_actual = balance[channel_id][:local][:udt]
 
     if udt_actual < udt_required
       puts "you do not have enough udt, please exchange it with ckb first."
@@ -431,7 +307,52 @@ class GPCCLI < Thor
     communicator = Communication.new(private_key)
     payment = { udt: udt_required }
     pinned_msg = { text: nil, id: options[:id] }
-    communicator.send_payments(info[:ip], info[:port], info[:id], payment, pinned_msg, duration: options[:duration].to_f)
+    communicator.send_payments(robot_ip, robot_port, channel_id, payment, pinned_msg, options[:duration].to_f)
+  end
+
+  # --------------send and pin msg.
+  desc "send_pinned_msg [--text text] [--duration seconds] [--price price_per_seconds]", "Send and pin the content you want."
+
+  option :text, :required => true
+  option :duration, :required => true
+  option :price, :required => true
+
+  def send_pinned_msg()
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port || !channel_id
+      puts "Please init the config.json."
+      return false
+    end
+
+    private_key = pubkey_to_privkey(pubkey)
+    balance = get_balance(pubkey)
+
+    udt_required = (options[:duration].to_f * options[:price].to_f).ceil
+    udt_actual = balance[channel_id][:local][:udt]
+
+    if udt_actual < udt_required
+      puts "you do not have enough udt, please exchange it with ckb first."
+    end
+    # construct the payment.
+    communicator = Communication.new(private_key)
+    payment = { udt: udt_required }
+    pinned_msg = { text: options[:text], id: nil }
+    communicator.send_payments(robot_ip, robot_port, channel_id, payment, pinned_msg, options[:duration].to_f)
+  end
+
+  # --------------Inquiry msg.
+  desc "refund", "Give back the money you didn't use up."
+
+  def refund()
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port
+      puts "Please init the config.json."
+      return false
+    end
+
+    private_key = pubkey_to_privkey(pubkey)
+    communicator = Communication.new(private_key)
+    communicator.send_refund_request(robot_ip, robot_port, channel_id)
   end
 end
 
