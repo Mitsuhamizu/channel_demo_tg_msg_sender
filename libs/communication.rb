@@ -723,7 +723,8 @@ class Communication
         data_raw = File.read("../client/config.json")
         data_hash = JSON.parse(data_raw, symbolize_names: true)
       end
-      id = { id: msg[:id] }
+
+      id = { channel_id: msg[:id] }
       data_hash = data_hash.merge(id)
       data_json = data_hash.to_json
       file = File.new("../client/config.json", "w")
