@@ -11,9 +11,9 @@ GEM
   specs:
     bitcoin-secp256k1 (0.5.2)
       ffi (>= 1.9.25)
-    bson (4.9.2)
+    bson (4.8.2)
     connection_pool (2.2.2)
-    ffi (1.12.2)
+    ffi (1.13.1)
     mongo (2.12.1)
       bson (>= 4.8.2, < 5.0.0)
     net-http-persistent (3.1.0)
@@ -26,6 +26,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bson (~> 4.8.2)
   ckb-sdk-ruby!
   mongo (~> 2.4)
   thor
