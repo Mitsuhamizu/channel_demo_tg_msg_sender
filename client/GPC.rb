@@ -275,6 +275,21 @@ class GPCCLI < Thor
     file.syswrite(data_json)
   end
 
+  # --------------Inquiry current bid.
+  desc "inquiry_bid", "inquiry the left time and price of current bid."
+
+  def inquiry_msg()
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+    if !pubkey || !robot_ip || !robot_port
+      puts "Please init the config.json."
+      return false
+    end
+
+    private_key = pubkey_to_privkey(pubkey)
+    communicator = Communication.new(private_key)
+    communicator.send_inquiry_bid(robot_ip, robot_port)
+  end
+
   # --------------Inquiry msg.
   desc "inquiry_msg <--text msg_text>", "inquiry the detailed information about this message."
 
@@ -393,12 +408,6 @@ class GPCCLI < Thor
       end
     end
     # run monitor.
-    pubkey, channel_id, robot_ip, robot_port = load_config()
-
-    if pubkey == nil
-      puts "Please init the config.json."
-      return false
-    end
 
     private_key = pubkey_to_privkey(pubkey)
     monitor = Minotor.new(private_key)

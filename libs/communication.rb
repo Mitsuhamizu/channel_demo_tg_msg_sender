@@ -1527,6 +1527,25 @@ class Communication
     end
   end
 
+  def send_inquiry_bid(remote_ip, remote_port)
+    s = TCPSocket.open(remote_ip, remote_port)
+    msg = { type: 12}.to_json
+    s.puts(msg)
+
+    begin
+      timeout(5) do
+        while (1)
+          msg = JSON.parse(s.gets, symbolize_names: true)
+          puts msg
+        end
+      end
+    rescue Timeout::Error
+      puts "Timed out. If you fail to receive the data, you should try again."
+    rescue => exception
+      s.close()
+    end
+  end
+
   def send_inquiry_tg_msg(remote_ip, remote_port, msg_text)
     s = TCPSocket.open(remote_ip, remote_port)
     msg = { type: 10, text: msg_text }.to_json
