@@ -14,11 +14,6 @@ class Init
     coll_sessions = db[pool_name]
     doc = { id: 0, privkey: privkey, current_block_num: @api.get_tip_block_number }
     view = coll_sessions.find({ id: 0 })
-
-    if view.count_documents() == 0
-      coll_sessions.insert_one(doc)
-    else
-      puts "the initialization has been down."
-    end
+    coll_sessions.insert_one(doc)
   end
 end
