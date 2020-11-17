@@ -1,4 +1,3 @@
-0x85ce75a6b678c6930a4f0938588f0240784971bb03632f1a2f1b25102b7cf5f0 #!/usr/bin/ruby
 require "rubygems"
 require "bundler/setup"
 require "ckb"
