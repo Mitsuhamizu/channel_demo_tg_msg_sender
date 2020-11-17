@@ -1427,7 +1427,6 @@ class Communication
     msg = { id: id, type: 6, fee: fee, fee_cell: fee_cell_h, change: local_change_output.to_h, msg_type: "closing" }.to_json
     s.puts(msg)
     @coll_sessions.find_one_and_update({ id: id }, { "$set" => { stage: 2, status: 9, msg_cache: msg, closing_time: current_height + 20, settlement_fee_cell: fee_cell_h, settlement_fee_change: local_change_output.to_h.to_json } })
-
     begin
       timeout(5) do
         while (1)

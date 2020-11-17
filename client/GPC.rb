@@ -64,6 +64,18 @@ def get_balance(pubkey)
   return balance
 end
 
+def update_config(update_field)
+  data_hash = {}
+  if File.file?("config.json")
+    data_raw = File.read("config.json")
+    data_hash = JSON.parse(data_raw, symbolize_names: true)
+  end
+  data_hash = data_hash.merge(update_field)
+  data_json = data_hash.to_json
+  file = File.new("config.json", "w")
+  file.syswrite(data_json)
+end
+
 class GPCCLI < Thor
   desc "init <private-key>", "Init with the private key."
   # --------------init
@@ -353,6 +365,47 @@ class GPCCLI < Thor
     private_key = pubkey_to_privkey(pubkey)
     communicator = Communication.new(private_key)
     communicator.send_refund_request(robot_ip, robot_port, channel_id)
+  end
+
+  # --------------Inquiry msg.
+  desc "start", "Set up for docker."
+
+  def start()
+    pubkey = nil
+    @client = Mongo::Client.new(["127.0.0.1:27017"], :database => "GPC")
+    @db = @client.database
+    @db.collections.each do |collection|
+      if collection.name.include? "_session_pool"
+        pubkey = collection.name[0..67]
+        break
+      end
+    end
+    # find the channel id.
+    if pubkey != nil
+      update_config({ pubkey: pubkey })
+      @coll_sessions = @db[pubkey + "_session_pool"]
+      view = @coll_sessions.find { }
+      # update channel_id.
+      view.each do |doc|
+        if doc[:id] != nil
+          update_config({ channel_id: doc[:id] })
+        end
+      end
+    end
+    # run monitor.
+    pubkey, channel_id, robot_ip, robot_port = load_config()
+
+    if pubkey == nil
+      puts "Please init the config.json."
+      return false
+    end
+
+    private_key = pubkey_to_privkey(pubkey)
+    monitor = Minotor.new(private_key)
+    thread_monitor_chain = Thread.start { monitor.monitor_chain() }
+    thread_monitor_cell = Thread.start { monitor.monitor_pending_cells() }
+    thread_monitor_chain.join
+    thread_monitor_cell.join
   end
 end
 
