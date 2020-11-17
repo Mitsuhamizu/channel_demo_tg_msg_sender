@@ -278,7 +278,7 @@ class GPCCLI < Thor
   # --------------Inquiry current bid.
   desc "inquiry_bid", "inquiry the left time and price of current bid."
 
-  def inquiry_msg()
+  def inquiry_bid()
     pubkey, channel_id, robot_ip, robot_port = load_config()
     if !pubkey || !robot_ip || !robot_port
       puts "Please init the config.json."

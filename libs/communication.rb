@@ -1529,7 +1529,7 @@ class Communication
 
   def send_inquiry_bid(remote_ip, remote_port)
     s = TCPSocket.open(remote_ip, remote_port)
-    msg = { type: 12}.to_json
+    msg = { type: 12 }.to_json
     s.puts(msg)
 
     begin

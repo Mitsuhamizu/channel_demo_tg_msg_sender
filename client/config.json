@@ -1,6 +1,6 @@
 {
-    "pubkey": "0x038d3cfceea4f9c2e76c5c4f5e99aec74c26d6ac894648b5700a0b71f91f9b5c2a",
-    "channel_id": 0,
+    "pubkey": "",
+    "channel_id": "",
     "robot_ip": "47.111.84.118",
     "robot_port": "111",
     "inquiry_text": null
