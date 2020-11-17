@@ -5,45 +5,36 @@ Also, you can view the contract codes for [GPC](https://github.com/ZhichunLu-11/
 
 ## Prerequisites
 
-* [ckb testnet](https://github.com/nervosnetwork/ckb) with rpc listen port 8114.
-* [ckb indexer](https://github.com/nervosnetwork/ckb-indexer) with listen port 8116.
+* [ckb testnet file](https://github.com/nervosnetwork/ckb).
+* [ckb indexer file](https://github.com/nervosnetwork/ckb-indexer).
+
+ckb testnet file means the folder where you run testnet, ckb indexer is the same. This is because docker has different rules for port mapping for different systems, so I run both servers inside docker for consistency. I suggest you make sure both are synced to the latest block before you use this robot.
 
 ## Usage
 
-First you should run
+### Run docker
 
 ``` 
 
-cd client
-ruby GPC.rb
+docker run -it -v <db folder>:/data/db -v <testnet folder>:/testnet -v <ckb indexer folder>:/indexer_tmp  --rm ubuntu-channel:latest
 ```
 
-to see all the command. I'm only going to cover the commands you need to run under normal cases here. 
+To run this docker you need to commit the paths to three folders, which stand for db, testnet and ckb_indexer. In the first time, the db path should be an empty folder. Then, I give the example in my machine.
 
-### Init client
+``` 
+
+docker run -it -v /Users/ZhiChunLu/test_db/:/data/db -v /Users/ZhiChunLu/ckb/testnet/:/testnet -v /Users/ZhiChunLu/ckb/ckb-indexer/tmp/:/indexer_tmp  --rm ubuntu-channel:latest
+```
+
+If you are running docker for the first time, initialize the client and run the monitor first. Please don't forget to prefix your private key with 0x.
 
 ``` 
 
 ruby GPC.rb init <Your private key>
+nohup ruby GPC.rb monitor &
 ```
 
-For example, 
-
-``` 
-
-ruby GPC.rb init 0xd986d7bf901e50368cbe565f239c224934cd554805357338abcef177efadc08d
-```
-
-Please don't forget to prefix it with 0x.
-
-### Monitor the chain
-
-``` 
-
-ruby GPC.rb monitor
-```
-
-This is to prevent the other party from cheating and to automatically send settlement transactions and so on. 
+If you've initialized it before, then docker will load it for you on startup. So you can just use the client directly.
 
 ### Create channel
 
@@ -68,12 +59,7 @@ Please follow the format of funding, even if the amount of UDT you want to put i
 channel is established, please wait the transaction on chain.
 ```
 
-Once the transaction on chain, you can see in the shell that runs the monitor
-
-``` 
-
-f119905665a0dea6a3eb6cbdc9bcf75b's fund tx on chain at block number 610468, the tx hash is 0x9f31a56c578047d6bc6714f984b52a9619367eb7acb74e3e7a4403e540d41e57.
-```
+Please note that you cannot make payments at this time, you will need to wait for the funding transaction to be on-chain. You will know this information in the next command.
 
 ### List channel
 
@@ -92,6 +78,7 @@ channel f119905665a0dea6a3eb6cbdc9bcf75b, with 4 payments and stage is 3
 ```
 
 * 'f119905665a0dea6a3eb6cbdc9bcf75b' is the channel id.
+* stage = 0 means the funding tx is not onchain, stage = 1 means the funding tx is onchain. And now you can make payments. stage > 1 means the channel is going to closing. So please not make any payment at that point.
 
 ### Exchange UDT
 
@@ -102,8 +89,9 @@ As you can see, you only put in CKB when you build the channel (If you've previo
 ruby GPC.rb make_exchange_ckb_to_UDT --quantity 20
 ```
 
-You can replace '20' with any number you want, as long as you have enough ckbytes. Note that one CKB can only be exchanged for one UDT.
-Also, you can trade UDT for CKB, just use make_exchange_UDT_to_ckb.
+You can replace '20' with any number you want, as long as you have enough ckbytes. Note that one CKB can only be exchanged for one UDT. Also, you can trade UDT for CKB, just use make_exchange_UDT_to_ckb. 
+
+Note, if you took some UDTs with you when you closed the channel before, then unfortunately they can't be replaced with CKBytes in the future because the server doesn't put in any CKBytes when it opens any channel.
 
 ### Inquiry msg id.
 
@@ -133,6 +121,33 @@ ruby GPC.rb pin_msg --id <msg_id> --duration <seconds> --price <price_per_second
 ```
 
 Duration denotes how long you want to pin this msg, price means the UDT per second you are willing to pay. Since the UDT amount can only be an integer, the total price you enter ends up being rounded upwards. For example, if you input duration with 10 seconds and 0.01 UDT per second. The amount you want to pay is 0.1, but I will round it upward. So the actually amount is 1. In this case, the server will treat your bid as 0.1 UDT per second.
+
+If a message is currently pinned, then you must meet both of the following conditions to replace it.
+
+* Your message will last longer than the rest of the current pinned message.
+* Your price is higher than the current one.
+
+You can use the following command to look up the remaining life and price of the current pinned message.
+
+``` 
+
+ruby GPC.rb inquiry_bid
+```
+
+If your pinned message is replaced before it runs out of life, then I will notify you in the tg group to initiate a refund. The refund is the amount of its remaining life multiplied by the price.
+
+For example, the robot will send
+
+``` 
+
+0x470dcdc5e44064909650113a274b3b36aecb6dc7, please initiate a refund.
+```
+
+Then, you can run 
+
+``` 
+ruby GPC.rb refund
+```
 
 ### Send and pin tg msg
 

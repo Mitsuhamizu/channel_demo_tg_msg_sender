@@ -304,7 +304,7 @@ class GPCCLI < Thor
 
     private_key = pubkey_to_privkey(pubkey)
     communicator = Communication.new(private_key)
-    communicator.send_inquiry_tg_msg(robot_ip, robot_port, options[:text])
+    communicator.send_inquiry_tg_msg(robot_ip, robot_port, options[:text].dup.force_encoding("ISO-8859-1").encode("UTF-8"))
   end
 
   # --------------pin msg.
@@ -363,7 +363,7 @@ class GPCCLI < Thor
     # construct the payment.
     communicator = Communication.new(private_key)
     payment = { udt: udt_required }
-    pinned_msg = { text: options[:text], id: nil }
+    pinned_msg = { text: options[:text].dup.force_encoding("ISO-8859-1").encode("UTF-8"), id: nil }
     communicator.send_payments(robot_ip, robot_port, channel_id, payment, pinned_msg, options[:duration].to_f)
   end
 
