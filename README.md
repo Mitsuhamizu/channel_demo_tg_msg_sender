@@ -38,7 +38,7 @@ If you've initialized it before, then docker will load it for you on startup. So
 
 ### Create channel
 
-Then you need to reopen a shell and run 
+Then you can use the client to create a channel.
 
 ``` 
 
@@ -89,10 +89,9 @@ As you can see, you only put in CKB when you build the channel (If you've previo
 ruby GPC.rb make_exchange_ckb_to_UDT --quantity 20
 ```
 
-You can replace '20' with any number you want, as long as you have enough ckbytes. Note that one CKB can only be exchanged for one UDT. Also, you can trade UDT for CKB, just use make_exchange_UDT_to_ckb. 
+You can replace '20' with any number you want, as long as you have enough ckbytes. Note that one CKB can only be exchanged for one UDT. Also, you can trade UDT for CKB, just use make_exchange_UDT_to_ckb. `quantity` is the amount of asset to be relaced, in this case 20 CKBytes, and if it is udt_to_ckb, then quantity is the UDTs.
 
 Note, if you took some UDTs with you when you closed the channel before, then unfortunately they can't be replaced with CKBytes in the future because the server doesn't put in any CKBytes when it opens any channel.
-
 ### Inquiry msg id.
 
 If you want to pin a msg already in this chat, you need to know the id of it firstly. 
@@ -146,6 +145,7 @@ For example, the robot will send
 Then, you can run 
 
 ``` 
+
 ruby GPC.rb refund
 ```
 

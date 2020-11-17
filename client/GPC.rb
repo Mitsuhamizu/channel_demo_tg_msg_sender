@@ -1,3 +1,4 @@
+#encoding=UTF-8
 require_relative "../libs/initialization.rb"
 require_relative "../libs/communication.rb"
 require_relative "../libs/chain_monitor.rb"
