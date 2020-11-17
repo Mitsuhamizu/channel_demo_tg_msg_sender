@@ -7,20 +7,6 @@ Also, you can view the contract codes for [GPC](https://github.com/ZhichunLu-11/
 
 * [ckb testnet](https://github.com/nervosnetwork/ckb) with rpc listen port 8114.
 * [ckb indexer](https://github.com/nervosnetwork/ckb-indexer) with listen port 8116.
-* [mongodb](https://github.com/mongodb/mongo)
-
-Please make sure that all of the above services are running and synced to the latest blocks. Then you need to have the following ruby module, and also, and I suggest you use ruby 2.6.
-
-* ckb-ruby-sdk
-* Thor
-* Mongo
-
-And then execute:
-
-``` 
-
-$ bundle install
-```
 
 ## Usage
 

@@ -1482,7 +1482,7 @@ class Communication
     ctx_info = @tx_generator.update_ctx(ctx_info)
 
     if stx_info.is_a? Numeric or stx_info.is_a? String
-      puts "Your balance is not enough, please check it."
+      puts "Yours or remote's balance is not enough, please check it."
       record_result({ "sender_make_payments_error_insufficient": stx_info })
       return false
     end
