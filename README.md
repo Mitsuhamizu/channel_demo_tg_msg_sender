@@ -15,7 +15,6 @@ ckb testnet file means the folder where you run testnet, ckb indexer is the same
 ### Run docker
 
 ``` 
-
 docker run -it -v <db folder>:/data/db -v <testnet folder>:/testnet -v <ckb indexer folder>:/indexer_tmp  --rm ubuntu-channel:latest
 ```
 
@@ -29,7 +28,6 @@ docker run -it -v /Users/ZhiChunLu/test_db/:/data/db -v /Users/ZhiChunLu/ckb/tes
 If you are running docker for the first time, initialize the client and run the monitor first. Please don't forget to prefix your private key with 0x.
 
 ``` 
-
 ruby GPC.rb init <Your private key>
 nohup ruby GPC.rb monitor &
 ```
@@ -41,21 +39,18 @@ If you've initialized it before, then docker will load it for you on startup. So
 Then you can use the client to create a channel.
 
 ``` 
-
 ruby GPC.rb send_establishment_request --funding <quantity>
 ```
 
 For example, 
 
 ``` 
-
 ruby GPC.rb send_establishment_request --funding ckb:200 UDT:0
 ```
 
 Please follow the format of funding, even if the amount of UDT you want to put in is zero. Then, if the channel is established successfully, you should see 
 
 ``` 
-
 channel is established, please wait the transaction on chain.
 ```
 
@@ -64,14 +59,12 @@ Please note that you cannot make payments at this time, you will need to wait fo
 ### List channel
 
 ``` 
-
 ruby GPC.rb list_channel
 ```
 
 This allows you to see the status of all your channels. For example, 
 
 ``` 
-
 channel f119905665a0dea6a3eb6cbdc9bcf75b, with 4 payments and stage is 3
  local's ckb: 80 ckbytes, local's UDT 88.
  remote's ckb: 120 ckbytes, remote's UDT 1999912.
@@ -85,26 +78,24 @@ channel f119905665a0dea6a3eb6cbdc9bcf75b, with 4 payments and stage is 3
 As you can see, you only put in CKB when you build the channel (If you've previously closed the channel while you held UDT, you can also invest in UDT while you're establishing the channel). to make the process more fun, I made the bot recognize UDT as the only currency. So you first need to exchange for UDT. 10 CKBytes can exchange 1 UDT.
 
 ``` 
-
 ruby GPC.rb make_exchange_ckb_to_UDT --quantity 20
 ```
 
 You can replace '20' with any number you want, as long as you have enough ckbytes. Note that one CKB can only be exchanged for one UDT. Also, you can trade UDT for CKB, just use make_exchange_UDT_to_ckb. `quantity` is the amount of asset to be relaced, in this case 20 CKBytes, and if it is udt_to_ckb, then quantity is the UDTs.
 
 Note, if you took some UDTs with you when you closed the channel before, then unfortunately they can't be replaced with CKBytes in the future because the server doesn't put in any CKBytes when it opens any channel.
+
 ### Inquiry msg id.
 
 If you want to pin a msg already in this chat, you need to know the id of it firstly. 
 
 ``` 
-
 ruby GPC.rb inquiry_msg --text <text>
 ```
 
 For example
 
 ``` 
-
 ruby GPC.rb inquiry_msg --text '123'
 '123' sent by Zhichun in group_test at 2020-11-12T16:14:49+08:00, the id of this msg is 146.
 Timed out. If you fail to receive the data, you should try again.
@@ -115,7 +106,6 @@ Timed out. If you fail to receive the data, you should try again.
 After knowing the id, you can pin a msg with specific id. 
 
 ``` 
-
 ruby GPC.rb pin_msg --id <msg_id> --duration <seconds> --price <price_per_seconds>
 ```
 
@@ -129,7 +119,6 @@ If a message is currently pinned, then you must meet both of the following condi
 You can use the following command to look up the remaining life and price of the current pinned message.
 
 ``` 
-
 ruby GPC.rb inquiry_bid
 ```
 
@@ -138,14 +127,12 @@ If your pinned message is replaced before it runs out of life, then I will notif
 For example, the robot will send
 
 ``` 
-
 0x470dcdc5e44064909650113a274b3b36aecb6dc7, please initiate a refund.
 ```
 
 Then, you can run 
 
 ``` 
-
 ruby GPC.rb refund
 ```
 
@@ -154,7 +141,6 @@ ruby GPC.rb refund
 Of course, you can let the bot pin msg with any content you want, which you let the bot send a msg and pin it immediately.
 
 ``` 
-
 ruby GPC.rb pin_msg --text <text> --duration <seconds> --price <price_per_seconds>
 ```
 
@@ -165,7 +151,6 @@ You have the following two ways to close the channel.
 1. Bilateral closing
 
 ``` 
-
 ruby GPC.rb send_closing_request
 ```
 
@@ -174,7 +159,6 @@ Closing in this way closes the channel immediately and you just need to wait for
 2. Unilateral closing
 
 ``` 
-
 ruby GPC.rb close_channel
 ```
 
