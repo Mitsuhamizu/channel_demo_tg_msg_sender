@@ -1314,7 +1314,6 @@ class Communication
         while (true)
           msg = s.gets
           if msg != nil
-            puts msg
             msg = JSON.parse(msg, symbolize_names: true)
             ret = process_recv_message(s, msg)
           end
