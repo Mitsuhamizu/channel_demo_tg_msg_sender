@@ -1310,7 +1310,7 @@ class Communication
     @logger.info("#{@key.pubkey} send msg1.")
 
     begin
-      timeout(5) do
+      timeout(10) do
         while (true)
           msg = s.gets
           if msg != nil
@@ -1391,7 +1391,7 @@ class Communication
     @logger.info("#{local_pubkey} sent payment")
 
     begin
-      timeout(5) do
+      timeout(10) do
         while (1)
           msg = JSON.parse(s.gets, symbolize_names: true)
           ret = process_recv_message(s, msg)
@@ -1428,7 +1428,7 @@ class Communication
     s.puts(msg)
     @coll_sessions.find_one_and_update({ id: id }, { "$set" => { stage: 2, status: 9, msg_cache: msg, closing_time: current_height + 20, settlement_fee_cell: fee_cell_h, settlement_fee_change: local_change_output.to_h.to_json } })
     begin
-      timeout(5) do
+      timeout(10) do
         while (1)
           msg = JSON.parse(s.gets, symbolize_names: true)
           ret = process_recv_message(s, msg)
@@ -1510,7 +1510,7 @@ class Communication
     @logger.info("#{local_pubkey} make exchange.")
 
     begin
-      timeout(5) do
+      timeout(10) do
         while (1)
           msg = JSON.parse(s.gets, symbolize_names: true)
           ret = process_recv_message(s, msg)
@@ -1533,7 +1533,7 @@ class Communication
     s.puts(msg)
 
     begin
-      timeout(5) do
+      timeout(10) do
         while (1)
           msg = JSON.parse(s.gets, symbolize_names: true)
           puts msg
@@ -1552,7 +1552,7 @@ class Communication
     s.puts(msg)
 
     begin
-      timeout(5) do
+      timeout(10) do
         while (1)
           msg = JSON.parse(s.gets, symbolize_names: true)
           puts msg
@@ -1571,7 +1571,7 @@ class Communication
     s.puts(msg)
 
     begin
-      timeout(5) do
+      timeout(10) do
         while (true)
           msg = s.gets
           if msg != nil
