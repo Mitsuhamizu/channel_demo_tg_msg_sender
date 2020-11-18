@@ -1537,6 +1537,7 @@ class Communication
         while (1)
           msg = JSON.parse(s.gets, symbolize_names: true)
           puts msg
+          break
         end
       end
     rescue Timeout::Error
