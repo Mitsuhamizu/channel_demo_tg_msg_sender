@@ -8,21 +8,26 @@ Also, you can view the contract codes for [GPC](https://github.com/ZhichunLu-11/
 * [ckb testnet file](https://github.com/nervosnetwork/ckb).
 * [ckb indexer file](https://github.com/nervosnetwork/ckb-indexer).
 
-ckb testnet file means the folder where you run testnet, ckb indexer is the same. This is because docker has different rules for port mapping for different systems, so I run both servers inside docker for consistency. I suggest you make sure both are synced to the latest block before you use this robot.
+ckb testnet file means the folder where you run testnet, ckb indexer is the same. I suggest you make sure both are synced to the latest block. Then, you can stop both services on your machine.
 
 ## Usage
+
+### Get docker
+
+``` 
+docker pull zhichunlu01/channel:latest
+```
 
 ### Run docker
 
 ``` 
-docker run -it -v <db folder>:/data/db -v <testnet folder>:/testnet -v <ckb indexer folder>:/indexer_tmp  --rm ubuntu-channel:latest
+docker run -it -v <db folder>:/data/db -v <testnet folder>:/testnet -v <ckb indexer folder>:/indexer_tmp  --rm zhichunlu01/channel:latest
 ```
 
-To run this docker you need to commit the paths to three folders, which stand for db, testnet and ckb_indexer. In the first time, the db path should be an empty folder. Then, I give the example in my machine.
+To run this docker you need to commit the paths to three folders, which stand for db, ckb testnet and ckb_indexer. In the first time, the db path should be an empty folder. Then, I give the example in my machine.
 
 ``` 
-
-docker run -it -v /Users/ZhiChunLu/test_db/:/data/db -v /Users/ZhiChunLu/ckb/testnet/:/testnet -v /Users/ZhiChunLu/ckb/ckb-indexer/tmp/:/indexer_tmp  --rm ubuntu-channel:latest
+docker run -it -v /Users/ZhiChunLu/test_db/:/data/db -v /Users/ZhiChunLu/ckb/testnet/:/testnet -v /Users/ZhiChunLu/ckb/ckb-indexer/tmp/:/indexer_tmp  --rm zhichunlu01/channel:latest
 ```
 
 If you are running docker for the first time, initialize the client and run the monitor first. Please don't forget to prefix your private key with 0x.
@@ -51,6 +56,7 @@ ruby GPC.rb send_establishment_request --funding ckb:200 UDT:0
 Please follow the format of funding, even if the amount of UDT you want to put in is zero. Then, if the channel is established successfully, you should see 
 
 ``` 
+
 channel is established, please wait the transaction on chain.
 ```
 
@@ -59,29 +65,31 @@ Please note that you cannot make payments at this time, you will need to wait fo
 ### List channel
 
 ``` 
+
 ruby GPC.rb list_channel
 ```
 
 This allows you to see the status of all your channels. For example, 
 
 ``` 
+
 channel f119905665a0dea6a3eb6cbdc9bcf75b, with 4 payments and stage is 3
  local's ckb: 80 ckbytes, local's UDT 88.
  remote's ckb: 120 ckbytes, remote's UDT 1999912.
 ```
 
-* 'f119905665a0dea6a3eb6cbdc9bcf75b' is the channel id.
-* stage = 0 means the funding tx is not onchain, stage = 1 means the funding tx is onchain. And now you can make payments. stage > 1 means the channel is going to closing. So please not make any payment at that point.
+* `f119905665a0dea6a3eb6cbdc9bcf75b` is the channel id.
+* `stage = 0` means the funding tx is not onchain, `stage = 1` means the funding tx is onchain. And now you can make payments. `stage > 1` means the channel is going to closing. So please not make any payment at that point.
 
 ### Exchange UDT
 
-As you can see, you only put in CKB when you build the channel (If you've previously closed the channel while you held UDT, you can also invest in UDT while you're establishing the channel). to make the process more fun, I made the bot recognize UDT as the only currency. So you first need to exchange for UDT. 10 CKBytes can exchange 1 UDT.
+As you can see, you only put in CKB when you build the channel (If you've previously closed the channel while you held UDT, you can also invest UDTs). To make the process more fun, I made the bot only accept UDT as the only currency. So you first need to exchange for UDT. 10 CKBytes can exchange 1 UDT.
 
 ``` 
-ruby GPC.rb make_exchange_ckb_to_UDT --quantity 20
+ruby GPC.rb make_exchange_ckb_to_udt --quantity 20
 ```
 
-You can replace '20' with any number you want, as long as you have enough ckbytes. Note that one CKB can only be exchanged for one UDT. Also, you can trade UDT for CKB, just use make_exchange_UDT_to_ckb. `quantity` is the amount of asset to be relaced, in this case 20 CKBytes, and if it is udt_to_ckb, then quantity is the UDTs.
+You can replace `20` with any number you want, as long as you have enough ckbytes. Also, you can trade UDT for CKB, just use make_exchange_udt_to_ckb. `quantity` is the amount of asset to be relaced, in this case 20 CKBytes, and if it is udt_to_ckb, then quantity is the UDTs.
 
 Note, if you took some UDTs with you when you closed the channel before, then unfortunately they can't be replaced with CKBytes in the future because the server doesn't put in any CKBytes when it opens any channel.
 
@@ -129,16 +137,17 @@ For example, the robot will send
 ``` 
 0x470dcdc5e44064909650113a274b3b36aecb6dc7, please initiate a refund.
 ```
-
+`0x470dcdc5e44064909650113a274b3b36aecb6dc7` is your pubkey.
 Then, you can run 
 
 ``` 
 ruby GPC.rb refund
 ```
+to get your refund.
 
 ### Send and pin tg msg
 
-Of course, you can let the bot pin msg with any content you want, which you let the bot send a msg and pin it immediately.
+Of course, you can let the bot pin msg with any content you want, which means you let the bot send a msg and pin it immediately.
 
 ``` 
 ruby GPC.rb pin_msg --text <text> --duration <seconds> --price <price_per_seconds>
@@ -162,17 +171,13 @@ Closing in this way closes the channel immediately and you just need to wait for
 ruby GPC.rb close_channel
 ```
 
-The advantage of this method is that you don't need to interact with the other party. However, please note that you are committing a closing transaction instead of a settlement transaction, and the Monitor will commit the corresponding settlement transaction after a hundred blocks of the closing transaction on chain.
+The advantage of this method is that you don't need to interact with the other party. However, please note that you are committing a closing transaction instead of a settlement transaction, and the Monitor will commit the corresponding settlement transaction after 100 blocks of the closing transaction on chain.
 
 ## FAQ
 
 ### This application clearly doesn't require a payment channel to implement, so why are you forcing the inclusion of a payment channel.
 
 This is actually a demo of a payment channel, so I actually just forced it in because I couldn't find a better idea. If you think of a better way to use it, please let me know.
-
-### Can I treat this bot as an application that sends messages anonymously?
-
-I was going to call it an anonymous bot, but I realized that the server has access to your IP (Although I don't actually record your IP.), and your public key on the ckb test network. So I just call it msg_sender. of course. But if you trust me, you can think of it as a bot that helps you send messages anonymously.
 
 ###  Why is it so un-robust? If I have a problem on the way to an interaction(Like disconnecting the Internet.), it doesn't even work!
 
